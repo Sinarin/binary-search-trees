@@ -11,6 +11,7 @@ class Node
 end
 
 class Tree
+    attr_accessor :root
   def initialize(array)
     @array = array.sort.uniq
     @root = build_tree(0, @array.length - 1)
@@ -185,20 +186,55 @@ class Tree
       end
     end
   end
+  
+  
+  def balanced?(root = @root, balanced = true)
+    #check if tree if this level is balanced, if it is not return false cease operation
+    difference = (height(root.left) - height(root.right)).abs
+    if difference > 1 
+      balanced = false
+      return balanced
+    end
 
+    #check left then right if balanced, 
+    if root.left != nil && root.right != nil
+      balanced = balanced?(root.left, balanced)
+      balanced = balanced?(root.right, balanced) unless balanced == false
+    end
+    #returns 'balanced = true' if all trees and sub trees are balanced
+    balanced
+  end
 
+  def rebalance
+    #rebalance only if tree is unbalanced
+    if !balanced?
+      @array = inorder()
+      @root = build_tree(0, @array.length - 1)
+    else
+      puts "tree is already balanced"
+    end
+  end
 
 
 end
 
-tree = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
-
-tree.insert(26)
+tree = Tree.new(Array.new(15) { rand(1..100) })
+p tree.balanced?
+p tree.level_order
+p tree.preorder
+p tree.inorder
+p tree.postorder
 tree.pretty_print
-tree.delete(67)
+tree.insert(145)
+tree.insert(1344)
+tree.insert(777)
+tree.insert(893)
 tree.pretty_print
-puts tree.find(5)
-p tree.postorder {|node| node.data += 1}
+p tree.balanced?
+tree.rebalance
+p tree.level_order
+p tree.preorder
+p tree.inorder
+p tree.postorder
 tree.pretty_print
-puts tree.height(tree.find(6))
-puts tree.depth(tree.find(9))
+p tree.balanced?
